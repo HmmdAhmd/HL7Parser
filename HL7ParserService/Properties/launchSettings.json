@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "HL7ParserService": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:7153;http://localhost:5112"
+    }
+  }
+}
