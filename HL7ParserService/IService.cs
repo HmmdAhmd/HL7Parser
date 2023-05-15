@@ -1,4 +1,5 @@
 ﻿using HL7ParserService.Models;
+using HL7ParserService.Utility;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -30,27 +31,32 @@ namespace HL7ParserService
 
         IMessage CreateACK(string fieldSeparator, string encodingChar, string sendingApp, string sendingFacility, string receivingApp, string receivingFacility, string controlId, string processingId, string versionId, string ackCode, string txtMsg)
         {
-            const string DATE_FORMAT = "yyyyMMddHHmmss";
-            const string MESSAGE_TYPE = "ACK";
-
             IMessage ack = new ACK();
             Terser ackTerser = new Terser(ack);
-            ackTerser.Set("/MSH-1", fieldSeparator);
-            ackTerser.Set("/MSH-2", encodingChar);
-            ackTerser.Set("/MSH-3", sendingApp);
-            ackTerser.Set("/MSH-4", sendingFacility);
-            ackTerser.Set("/MSH-5", receivingApp);
-            ackTerser.Set("/MSH-6", receivingFacility);
-            ackTerser.Set("/MSH-7", DateTime.Now.ToString(DATE_FORMAT));
-            ackTerser.Set("/MSH-9", MESSAGE_TYPE);
-            ackTerser.Set("/MSH-10", controlId);
-            ackTerser.Set("/MSH-11", processingId);
-            ackTerser.Set("/MSH-12", versionId);
-            ackTerser.Set("/MSA-1", ackCode);
-            ackTerser.Set("/MSA-2", controlId);
-            ackTerser.Set("/MSA-3", txtMsg);
+            ackTerser.Set(Constants.MSH1_SEGMENT, fieldSeparator);
+            ackTerser.Set(Constants.MSH2_SEGMENT, encodingChar);
+            ackTerser.Set(Constants.MSH3_SEGMENT, sendingApp);
+            ackTerser.Set(Constants.MSH4_SEGMENT, sendingFacility);
+            ackTerser.Set(Constants.MSH5_SEGMENT, receivingApp);
+            ackTerser.Set(Constants.MSH6_SEGMENT, receivingFacility);
+            ackTerser.Set(Constants.MSH7_SEGMENT, DateTime.Now.ToString(DATE_FORMAT));
+            ackTerser.Set(Constants.MSH9_SEGMENT, MESSAGE_TYPE);
+            ackTerser.Set(Constants.MSH10_SEGMENT, controlId);
+            ackTerser.Set(Constants.MSH11_SEGMENT, processingId);
+            ackTerser.Set(Constants.MSH12_SEGMENT, versionId);
+            ackTerser.Set(Constants.MSA1_SEGMENT, ackCode);
+            ackTerser.Set(Constants.MSA2_SEGMENT, controlId);
+            ackTerser.Set(Constants.MSA3_SEGMENT, txtMsg);
             return ack;
         }
+
+        private string GenerateRandomId()
+        {
+            var random = new Random();
+            //To generate random id of length 8
+            return random.Next(10000000, 100000000).ToString();
+        }
+
         private void StoreHL7(string message)
         {
             HL7Message hl7 = new HL7Message
@@ -63,48 +69,35 @@ namespace HL7ParserService
 
         public string ParseHL7(string message)
         {
-            const string FIELD_SEPARATOR = "|";
-            const string DEFAULT_ENCODING_CHAR = "^~\\&";
-            const string DEFAULT_SENDING_APP = "HelloService";
-            const string DEFAULT_SENDING_FACILITY = "HelloFacility";
-            const string DEFAULT_PROCESSING_ID = "T";
-            const string DEFAULT_VERSION_ID = "2.5";
-            const string SUCCESS_ACK_CODE = "AA";
-            const string ERROR_ACK_CODE = "AE";
-            const string SUCCESS_TXT_MSG = "Message is received and stored successfully";
-            const string ERROR_TXT_MSG = "Message is invalid";
-
             message = message.Trim();
             var parser = new PipeParser();
-            var random = new Random();
             IMessage ack = null;
             try
             {
                 IMessage hl7 = parser.Parse(message);
 
-                var msh = hl7.GetStructure("MSH");
+                var msh = hl7.GetStructure(Constants.MSH_STRUCTURE);
                 Terser terser = new Terser(hl7);
 
-                string receivingApp = terser.Get("/MSH-5");
-                string receivingFacility = terser.Get("/MSH-6");
-                string controlId = terser.Get("/MSH-10");
+                string receivingApp = terser.Get(Constants.MSH5_SEGMENT);
+                string receivingFacility = terser.Get(Constants.MSH6_SEGMENT);
+                string controlId = terser.Get(Constants.MSH10_SEGMENT);
                 if (controlId.IsNullOrEmpty())
                 {
-                    controlId = random.Next(10000000, 100000000).ToString();
+                    controlId = GenerateRandomId();
                 }
-                string processingId = terser.Get("/MSH-11");
-                string versionId = terser.Get("/MSH-12");
+                string processingId = terser.Get(Constants.MSH11_SEGMENT);
+                string versionId = terser.Get(Constants.MSH12_SEGMENT);
 
-                string fileName = String.Format("Messages/{0}.txt", controlId);
                 StoreHL7(message);
 
                 ack = CreateACK(
-                    terser.Get("/MSH-1"),
-                    terser.Get("/MSH-2"),
+                    terser.Get(Constants.MSH1_SEGMENT),
+                    terser.Get(Constants.MSH2_SEGMENT),
                     receivingApp.IsNullOrEmpty() ? DEFAULT_SENDING_APP : receivingApp,
                     receivingFacility.IsNullOrEmpty() ? DEFAULT_SENDING_FACILITY : receivingFacility,
-                    terser.Get("/MSH-3"),
-                    terser.Get("/MSH-4"),
+                    terser.Get(Constants.MSH3_SEGMENT),
+                    terser.Get(Constants.MSH4_SEGMENT),
                     controlId,
                     processingId.IsNullOrEmpty() ? DEFAULT_PROCESSING_ID : processingId,
                     versionId.IsNullOrEmpty() ? DEFAULT_VERSION_ID : versionId,
@@ -120,14 +113,14 @@ namespace HL7ParserService
                     DEFAULT_SENDING_FACILITY,
                     String.Empty,
                     String.Empty,
-                    random.Next(10000000, 100000000).ToString(),
+                    GenerateRandomId(),
                     DEFAULT_PROCESSING_ID,
                     DEFAULT_VERSION_ID,
                     ERROR_ACK_CODE,
                     ERROR_TXT_MSG);
             }
 
-            return parser.Encode(ack).Replace("\r", Environment.NewLine);
+            return parser.Encode(ack).Replace(Constants.CARRIAGE_RETURN, Environment.NewLine);
         }
     }
 }
