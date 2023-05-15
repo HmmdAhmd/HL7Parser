@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "https://localhost:5001/HL7Parser"
+      "http://localhost:8282/wsdl-demo"
     ],
     "collectionTypes": [
       "System.Array",

@@ -11,23 +11,356 @@ namespace ServiceReference
 {
     
     
+    /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IService")]
-    public interface IService
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class soapFaultType
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IService/ParseHL7", ReplyAction="http://tempuri.org/IService/ParseHL7Response")]
-        System.Threading.Tasks.Task<string> ParseHL7Async(string message);
+        private string codeField;
+        
+        private string reasonField;
+        
+        private string detailField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=0)]
+        public string Code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string Reason
+        {
+            get
+            {
+                return this.reasonField;
+            }
+            set
+            {
+                this.reasonField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Detail
+        {
+            get
+            {
+                return this.detailField;
+            }
+            set
+            {
+                this.detailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class UnsupportedOperationFaultType
+    {
+        
+        private string codeField;
+        
+        private object reasonField;
+        
+        private string detailField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=0)]
+        public string Code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public object Reason
+        {
+            get
+            {
+                return this.reasonField;
+            }
+            set
+            {
+                this.reasonField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Detail
+        {
+            get
+            {
+                return this.detailField;
+            }
+            set
+            {
+                this.detailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class SecurityFaultType
+    {
+        
+        private string codeField;
+        
+        private object reasonField;
+        
+        private string detailField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=0)]
+        public string Code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public object Reason
+        {
+            get
+            {
+                return this.reasonField;
+            }
+            set
+            {
+                this.reasonField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Detail
+        {
+            get
+            {
+                return this.detailField;
+            }
+            set
+            {
+                this.detailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class MessageTooLargeFaultType
+    {
+        
+        private string codeField;
+        
+        private object reasonField;
+        
+        private string detailField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=0)]
+        public string Code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public object Reason
+        {
+            get
+            {
+                return this.reasonField;
+            }
+            set
+            {
+                this.reasonField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Detail
+        {
+            get
+            {
+                return this.detailField;
+            }
+            set
+            {
+                this.detailField = value;
+            }
+        }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
-    public interface IServiceChannel : ServiceReference.IService, System.ServiceModel.IClientChannel
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IIS_PortType")]
+    public interface IIS_PortType
+    {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IIS_PortType/connectivityTest", ReplyAction="http://tempuri.org/IIS_PortType/connectivityTestResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ServiceReference.soapFaultType), Action="http://tempuri.org/IIS_PortType/connectivityTestfault", Name="fault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ServiceReference.UnsupportedOperationFaultType), Action="http://tempuri.org/IIS_PortType/connectivityTestUnsupportedOperationFault", Name="UnsupportedOperationFault")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<ServiceReference.connectivityTestResponse> connectivityTestAsync(ServiceReference.connectivityTestRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IIS_PortType/submitSingleMessage", ReplyAction="http://tempuri.org/IIS_PortType/submitSingleMessageResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ServiceReference.soapFaultType), Action="http://tempuri.org/IIS_PortType/submitSingleMessagefault", Name="fault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ServiceReference.SecurityFaultType), Action="http://tempuri.org/IIS_PortType/submitSingleMessageSecurityFault", Name="SecurityFault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ServiceReference.MessageTooLargeFaultType), Action="http://tempuri.org/IIS_PortType/submitSingleMessageMessageTooLargeFault", Name="MessageTooLargeFault")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<ServiceReference.submitSingleMessageResponse> submitSingleMessageAsync(ServiceReference.submitSingleMessageRequest request);
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="connectivityTest", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class connectivityTestRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string echoBack;
+        
+        public connectivityTestRequest()
+        {
+        }
+        
+        public connectivityTestRequest(string echoBack)
+        {
+            this.echoBack = echoBack;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="connectivityTestResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class connectivityTestResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string @return;
+        
+        public connectivityTestResponse()
+        {
+        }
+        
+        public connectivityTestResponse(string @return)
+        {
+            this.@return = @return;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="submitSingleMessage", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class submitSingleMessageRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string username;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string facilityID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string hl7Message;
+        
+        public submitSingleMessageRequest()
+        {
+        }
+        
+        public submitSingleMessageRequest(string username, string password, string facilityID, string hl7Message)
+        {
+            this.username = username;
+            this.password = password;
+            this.facilityID = facilityID;
+            this.hl7Message = hl7Message;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="submitSingleMessageResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class submitSingleMessageResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string @return;
+        
+        public submitSingleMessageResponse()
+        {
+        }
+        
+        public submitSingleMessageResponse(string @return)
+        {
+            this.@return = @return;
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
+    public interface IIS_PortTypeChannel : ServiceReference.IIS_PortType, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
-    public partial class ServiceClient : System.ServiceModel.ClientBase<ServiceReference.IService>, ServiceReference.IService
+    public partial class IS_PortTypeClient : System.ServiceModel.ClientBase<ServiceReference.IIS_PortType>, ServiceReference.IIS_PortType
     {
         
         /// <summary>
@@ -37,42 +370,66 @@ namespace ServiceReference
         /// <param name="clientCredentials">The client credentials</param>
         static partial void ConfigureEndpoint(System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Description.ClientCredentials clientCredentials);
         
-        public ServiceClient() : 
-                base(ServiceClient.GetDefaultBinding(), ServiceClient.GetDefaultEndpointAddress())
+        public IS_PortTypeClient() : 
+                base(IS_PortTypeClient.GetDefaultBinding(), IS_PortTypeClient.GetDefaultEndpointAddress())
         {
-            this.Endpoint.Name = EndpointConfiguration.BasicHttpBinding_IService.ToString();
+            this.Endpoint.Name = EndpointConfiguration.BasicHttpBinding_IIS_PortType.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public ServiceClient(EndpointConfiguration endpointConfiguration) : 
-                base(ServiceClient.GetBindingForEndpoint(endpointConfiguration), ServiceClient.GetEndpointAddress(endpointConfiguration))
-        {
-            this.Endpoint.Name = endpointConfiguration.ToString();
-            ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
-        }
-        
-        public ServiceClient(EndpointConfiguration endpointConfiguration, string remoteAddress) : 
-                base(ServiceClient.GetBindingForEndpoint(endpointConfiguration), new System.ServiceModel.EndpointAddress(remoteAddress))
+        public IS_PortTypeClient(EndpointConfiguration endpointConfiguration) : 
+                base(IS_PortTypeClient.GetBindingForEndpoint(endpointConfiguration), IS_PortTypeClient.GetEndpointAddress(endpointConfiguration))
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public ServiceClient(EndpointConfiguration endpointConfiguration, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(ServiceClient.GetBindingForEndpoint(endpointConfiguration), remoteAddress)
+        public IS_PortTypeClient(EndpointConfiguration endpointConfiguration, string remoteAddress) : 
+                base(IS_PortTypeClient.GetBindingForEndpoint(endpointConfiguration), new System.ServiceModel.EndpointAddress(remoteAddress))
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public ServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public IS_PortTypeClient(EndpointConfiguration endpointConfiguration, System.ServiceModel.EndpointAddress remoteAddress) : 
+                base(IS_PortTypeClient.GetBindingForEndpoint(endpointConfiguration), remoteAddress)
+        {
+            this.Endpoint.Name = endpointConfiguration.ToString();
+            ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
+        }
+        
+        public IS_PortTypeClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
         }
         
-        public System.Threading.Tasks.Task<string> ParseHL7Async(string message)
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<ServiceReference.connectivityTestResponse> ServiceReference.IIS_PortType.connectivityTestAsync(ServiceReference.connectivityTestRequest request)
         {
-            return base.Channel.ParseHL7Async(message);
+            return base.Channel.connectivityTestAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReference.connectivityTestResponse> connectivityTestAsync(string echoBack)
+        {
+            ServiceReference.connectivityTestRequest inValue = new ServiceReference.connectivityTestRequest();
+            inValue.echoBack = echoBack;
+            return ((ServiceReference.IIS_PortType)(this)).connectivityTestAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<ServiceReference.submitSingleMessageResponse> ServiceReference.IIS_PortType.submitSingleMessageAsync(ServiceReference.submitSingleMessageRequest request)
+        {
+            return base.Channel.submitSingleMessageAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReference.submitSingleMessageResponse> submitSingleMessageAsync(string username, string password, string facilityID, string hl7Message)
+        {
+            ServiceReference.submitSingleMessageRequest inValue = new ServiceReference.submitSingleMessageRequest();
+            inValue.username = username;
+            inValue.password = password;
+            inValue.facilityID = facilityID;
+            inValue.hl7Message = hl7Message;
+            return ((ServiceReference.IIS_PortType)(this)).submitSingleMessageAsync(inValue);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()
@@ -82,7 +439,7 @@ namespace ServiceReference
         
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IService))
+            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IIS_PortType))
             {
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
@@ -97,27 +454,27 @@ namespace ServiceReference
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IService))
+            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IIS_PortType))
             {
-                return new System.ServiceModel.EndpointAddress("https://localhost:5001/HL7Parser");
+                return new System.ServiceModel.EndpointAddress("http://localhost:8282/wsdl-demo");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
         
         private static System.ServiceModel.Channels.Binding GetDefaultBinding()
         {
-            return ServiceClient.GetBindingForEndpoint(EndpointConfiguration.BasicHttpBinding_IService);
+            return IS_PortTypeClient.GetBindingForEndpoint(EndpointConfiguration.BasicHttpBinding_IIS_PortType);
         }
         
         private static System.ServiceModel.EndpointAddress GetDefaultEndpointAddress()
         {
-            return ServiceClient.GetEndpointAddress(EndpointConfiguration.BasicHttpBinding_IService);
+            return IS_PortTypeClient.GetEndpointAddress(EndpointConfiguration.BasicHttpBinding_IIS_PortType);
         }
         
         public enum EndpointConfiguration
         {
             
-            BasicHttpBinding_IService,
+            BasicHttpBinding_IIS_PortType,
         }
     }
 }

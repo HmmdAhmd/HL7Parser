@@ -8,28 +8,40 @@ using NHapi.Base.Parser;
 using NHapi.Base.Util;
 using NHapi.Base;
 using NHapi.Model.V25.Message;
+using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace HL7ParserService
 {
     [ServiceContract]
-    public interface IService
+    public interface IIS_PortType
     {
         [OperationContract]
-        string ParseHL7(string message);
+        [FaultContract(typeof(soapFaultType), Name = "fault")]
+        [FaultContract(typeof(UnsupportedOperationFaultType), Name = "UnsupportedOperationFault")]
+        [XmlSerializerFormat(SupportFaults = true)]
+        connectivityTestResponse connectivityTest(connectivityTestRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(soapFaultType), Name = "fault")]
+        [FaultContract(typeof(SecurityFaultType), Name = "SecurityFault")]
+        [FaultContract(typeof(MessageTooLargeFaultType), Name = "MessageTooLargeFault")]
+        [XmlSerializerFormat(SupportFaults = true)]
+        submitSingleMessageResponse submitSingleMessage(submitSingleMessageRequest request);
     }
 
-    public class Service : IService
+    public class IS_PortType : IIS_PortType
     {
         private readonly IMongoCollection<HL7Message> _collection;
 
-        public Service(IOptions<MongoDBSettings> settings)
+        public IS_PortType(IOptions<MongoDBSettings> settings)
         {
             _collection = new MongoClient(settings.Value.ConnectionString)
                 .GetDatabase(settings.Value.DatabaseName)
                 .GetCollection<HL7Message>(settings.Value.CollectionName);
         }
 
-        IMessage CreateACK(string fieldSeparator, string encodingChar, string sendingApp, string sendingFacility, string receivingApp, string receivingFacility, string controlId, string processingId, string versionId, string ackCode, string txtMsg)
+        private IMessage CreateACK(string fieldSeparator, string encodingChar, string sendingApp, string sendingFacility, string receivingApp, string receivingFacility, string controlId, string processingId, string versionId, string ackCode, string txtMsg)
         {
             IMessage ack = new ACK();
             Terser ackTerser = new Terser(ack);
@@ -57,19 +69,22 @@ namespace HL7ParserService
             return random.Next(10000000, 100000000).ToString();
         }
 
-        private void StoreHL7(string message)
+        private void StoreHL7(submitSingleMessageRequest request)
         {
             HL7Message hl7 = new HL7Message
             {
-                Message = message,
+                Username = request.username,
+                Password = request.password,
+                FacilityId = request.facilityID,
+                Message = request.hl7Message,
                 CreatedDate = DateTime.Now,
             };
             _collection.InsertOne(hl7);
         }
 
-        public string ParseHL7(string message)
+        public submitSingleMessageResponse submitSingleMessage(submitSingleMessageRequest request)
         {
-            message = message.Trim();
+            string message = request.hl7Message.Trim();
             var parser = new PipeParser();
             IMessage ack = null;
             try
@@ -89,7 +104,7 @@ namespace HL7ParserService
                 string processingId = terser.Get(Constants.MSH11_SEGMENT);
                 string versionId = terser.Get(Constants.MSH12_SEGMENT);
 
-                StoreHL7(message);
+                StoreHL7(request);
 
                 ack = CreateACK(
                     terser.Get(Constants.MSH1_SEGMENT),
@@ -120,7 +135,210 @@ namespace HL7ParserService
                     Constants.ERROR_TXT_MSG);
             }
 
-            return parser.Encode(ack).Replace(Constants.CARRIAGE_RETURN, Environment.NewLine);
+            return new submitSingleMessageResponse { @return = parser.Encode(ack).Replace(Constants.CARRIAGE_RETURN, Environment.NewLine) };
+        }
+
+        public connectivityTestResponse connectivityTest(connectivityTestRequest request)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [XmlType]
+    public class soapFaultType
+    {
+        string codeField;
+        string reasonField;
+        string detailField;
+
+        [XmlElement(DataType = "integer", Order = 0)]
+        public string Code
+        {
+            get { return codeField; }
+            set { codeField = value; }
+        }
+
+        [XmlElement(Order = 1)]
+        public string Reason
+        {
+            get { return reasonField; }
+            set { reasonField = value; }
+        }
+
+        [XmlElement(Order = 2)]
+        public string Detail
+        {
+            get { return detailField; }
+            set { detailField = value; }
+        }
+    }
+
+    [XmlType]
+    public class UnsupportedOperationFaultType
+    {
+        private string codeField;
+        private object reasonField;
+        private string detailField;
+
+        [XmlElement(DataType = "integer", Order = 0)]
+        public string Code
+        {
+            get { return codeField; }
+            set { codeField = value; }
+        }
+
+        [XmlElement(Order = 1)]
+        public object Reason
+        {
+            get { return reasonField; }
+            set { reasonField = value; }
+        }
+
+        [XmlElement(Order = 2)]
+        public string Detail
+        {
+            get { return detailField; }
+            set { detailField = value; }
+        }
+    }
+
+    [XmlType]
+    public class SecurityFaultType
+    {
+        private string codeField;
+        private object reasonField;
+        private string detailField;
+
+        [XmlElement(DataType = "integer", Order = 0)]
+        public string Code
+        {
+            get { return codeField; }
+            set { codeField = value; }
+        }
+
+        [XmlElement(Order = 1)]
+        public object Reason
+        {
+            get { return reasonField; }
+            set { reasonField = value; }
+        }
+
+        [XmlElement(Order = 2)]
+        public string Detail
+        {
+            get { return detailField; }
+            set { detailField = value; }
+        }
+    }
+
+    [XmlType]
+    public class MessageTooLargeFaultType
+    {
+        private string codeField;
+        private object reasonField;
+        private string detailField;
+
+        [XmlElement(DataType = "integer", Order = 0)]
+        public string Code
+        {
+            get { return codeField; }
+            set { codeField = value; }
+        }
+
+        [XmlElement(Order = 1)]
+        public object Reason
+        {
+            get { return reasonField; }
+            set { reasonField = value; }
+        }
+
+        [XmlElement(Order = 2)]
+        public string Detail
+        {
+            get { return detailField; }
+            set { detailField = value; }
+        }
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    [MessageContract(WrapperName = "connectivityTest",IsWrapped =true)]
+    public class connectivityTestRequest
+    {
+
+        [MessageBodyMember(Order = 0)]
+        [XmlElement(IsNullable = true)]
+        public string echoBack;
+
+        public connectivityTestRequest() { }
+
+        public connectivityTestRequest(string echoBack)
+        {
+            this.echoBack = echoBack;
+        }
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    [MessageContract(WrapperName = "connectivityTestResponse", IsWrapped = true)]
+    public class connectivityTestResponse
+    {
+
+        [MessageBodyMember(Order = 0)]
+        [XmlElement(IsNullable = true)]
+        public string @return;
+
+        public connectivityTestResponse() { }
+
+        public connectivityTestResponse(string @return)
+        {
+            this.@return = @return;
+        }
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    [MessageContract(WrapperName = "submitSingleMessage", IsWrapped = true)]
+    public class submitSingleMessageRequest
+    {
+        [MessageBodyMember(Order = 0)]
+        [XmlElement(IsNullable = true)]
+        public string username;
+
+        [MessageBodyMember(Order = 1)]
+        [XmlElement(IsNullable = true)]
+        public string password;
+
+        [MessageBodyMember(Order = 2)]
+        [XmlElement(IsNullable = true)]
+        public string facilityID;
+
+        [MessageBodyMember(Order = 3)]
+        [XmlElement(IsNullable = true)]
+        public string hl7Message;
+
+        public submitSingleMessageRequest() { }
+
+        public submitSingleMessageRequest(string username, string password, string facilityID, string hl7Message)
+        {
+            this.username = username;
+            this.password = password;
+            this.facilityID = facilityID;
+            this.hl7Message = hl7Message;
+        }
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    [MessageContract(WrapperName = "submitSingleMessageResponse", IsWrapped = true)]
+    public class submitSingleMessageResponse
+    {
+
+        [MessageBodyMember(Order = 0)]
+        [XmlElement(IsNullable = true)]
+        public string @return;
+
+        public submitSingleMessageResponse() { }
+
+        public submitSingleMessageResponse(string @return)
+        {
+            this.@return = @return;
         }
     }
 }
