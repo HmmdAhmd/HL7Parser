@@ -29,6 +29,6 @@
         public const string MSA1_SEGMENT = "/MSA-1";
         public const string MSA2_SEGMENT = "/MSA-2";
         public const string MSA3_SEGMENT = "/MSA-3";
-        public const string cARRIAGE_RETURN = "\r";
+        public const string CARRIAGE_RETURN = "\r";
     }
 }

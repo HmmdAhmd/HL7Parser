@@ -39,8 +39,8 @@ namespace HL7ParserService
             ackTerser.Set(Constants.MSH4_SEGMENT, sendingFacility);
             ackTerser.Set(Constants.MSH5_SEGMENT, receivingApp);
             ackTerser.Set(Constants.MSH6_SEGMENT, receivingFacility);
-            ackTerser.Set(Constants.MSH7_SEGMENT, DateTime.Now.ToString(DATE_FORMAT));
-            ackTerser.Set(Constants.MSH9_SEGMENT, MESSAGE_TYPE);
+            ackTerser.Set(Constants.MSH7_SEGMENT, DateTime.Now.ToString(Constants.DATE_FORMAT));
+            ackTerser.Set(Constants.MSH9_SEGMENT, Constants.MESSAGE_TYPE);
             ackTerser.Set(Constants.MSH10_SEGMENT, controlId);
             ackTerser.Set(Constants.MSH11_SEGMENT, processingId);
             ackTerser.Set(Constants.MSH12_SEGMENT, versionId);
@@ -94,30 +94,30 @@ namespace HL7ParserService
                 ack = CreateACK(
                     terser.Get(Constants.MSH1_SEGMENT),
                     terser.Get(Constants.MSH2_SEGMENT),
-                    receivingApp.IsNullOrEmpty() ? DEFAULT_SENDING_APP : receivingApp,
-                    receivingFacility.IsNullOrEmpty() ? DEFAULT_SENDING_FACILITY : receivingFacility,
+                    receivingApp.IsNullOrEmpty() ? Constants.DEFAULT_SENDING_APP : receivingApp,
+                    receivingFacility.IsNullOrEmpty() ? Constants.DEFAULT_SENDING_FACILITY : receivingFacility,
                     terser.Get(Constants.MSH3_SEGMENT),
                     terser.Get(Constants.MSH4_SEGMENT),
                     controlId,
-                    processingId.IsNullOrEmpty() ? DEFAULT_PROCESSING_ID : processingId,
-                    versionId.IsNullOrEmpty() ? DEFAULT_VERSION_ID : versionId,
-                    SUCCESS_ACK_CODE,
-                    SUCCESS_TXT_MSG);
+                    processingId.IsNullOrEmpty() ? Constants.DEFAULT_PROCESSING_ID : processingId,
+                    versionId.IsNullOrEmpty() ? Constants.DEFAULT_VERSION_ID : versionId,
+                    Constants.SUCCESS_ACK_CODE,
+                    Constants.SUCCESS_TXT_MSG);
             }
             catch (HL7Exception)
             {
                 ack = CreateACK(
-                    FIELD_SEPARATOR,
-                    DEFAULT_ENCODING_CHAR,
-                    DEFAULT_SENDING_APP,
-                    DEFAULT_SENDING_FACILITY,
+                    Constants.FIELD_SEPARATOR,
+                    Constants.DEFAULT_ENCODING_CHAR,
+                    Constants.DEFAULT_SENDING_APP,
+                    Constants.DEFAULT_SENDING_FACILITY,
                     String.Empty,
                     String.Empty,
                     GenerateRandomId(),
-                    DEFAULT_PROCESSING_ID,
-                    DEFAULT_VERSION_ID,
-                    ERROR_ACK_CODE,
-                    ERROR_TXT_MSG);
+                    Constants.DEFAULT_PROCESSING_ID,
+                    Constants.DEFAULT_VERSION_ID,
+                    Constants.ERROR_ACK_CODE,
+                    Constants.ERROR_TXT_MSG);
             }
 
             return parser.Encode(ack).Replace(Constants.CARRIAGE_RETURN, Environment.NewLine);
