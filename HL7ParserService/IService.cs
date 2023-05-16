@@ -14,6 +14,7 @@ using Amazon.Runtime.Internal;
 
 namespace HL7ParserService
 {
+    // Service Interface
     [ServiceContract]
     public interface IIS_PortType
     {
@@ -31,11 +32,13 @@ namespace HL7ParserService
         submitSingleMessageResponse submitSingleMessage(submitSingleMessageRequest request);
     }
 
+    // Service
     public class IS_PortType : IIS_PortType
     {
         private readonly IMongoCollection<HL7Message> _collection;
         private readonly SecuritySettings _securityUser;
 
+        // Service Constructor with MongoDBSettings and SecuritySettings Dependency Injection
         public IS_PortType(IOptions<MongoDBSettings> dbSettings, IOptions<SecuritySettings> securitySettings)
         {
             _collection = new MongoClient(dbSettings.Value.ConnectionString)
@@ -44,6 +47,21 @@ namespace HL7ParserService
             _securityUser = securitySettings.Value;
         }
 
+        /// <summary>
+        /// Function to Create HL7 Acknowledgement Message
+        /// </summary>
+        /// <param name="fieldSeparator"></param>
+        /// <param name="encodingChar"></param>
+        /// <param name="sendingApp"></param>
+        /// <param name="sendingFacility"></param>
+        /// <param name="receivingApp"></param>
+        /// <param name="receivingFacility"></param>
+        /// <param name="controlId"></param>
+        /// <param name="processingId"></param>
+        /// <param name="versionId"></param>
+        /// <param name="ackCode"></param>
+        /// <param name="txtMsg"></param>
+        /// return IMessage HL7 ACK
         private IMessage CreateACK(string fieldSeparator, string encodingChar, string sendingApp, string sendingFacility, string receivingApp, string receivingFacility, string controlId, string processingId, string versionId, string ackCode, string txtMsg)
         {
             IMessage ack = new ACK();
@@ -65,6 +83,10 @@ namespace HL7ParserService
             return ack;
         }
 
+        /// <summary>
+        /// Function to Generate Random Id incase CONTROL ID is missing from HL7 Message Header
+        /// </summary>
+        /// returns a random Id of length 8
         private string GenerateRandomId()
         {
             var random = new Random();
@@ -72,18 +94,26 @@ namespace HL7ParserService
             return random.Next(10000000, 100000000).ToString();
         }
 
-        private void StoreHL7(submitSingleMessageRequest request)
+        /// <summary>
+        /// Function to Store HL7 Message to Cosmos DB
+        /// </summary>
+        /// <param name="request"></param>
+        private void StoreHL7(string facilityId, string message)
         {
             HL7Message hl7 = new HL7Message
             {
-                FacilityId = request.facilityID,
-                Message = request.hl7Message,
+                FacilityId = facilityId,
+                Message = message,
                 CreatedDate = DateTime.Now,
             };
             _collection.InsertOne(hl7);
         }
 
-        private void CheckForSoapFault(submitSingleMessageRequest request)
+        /// <summary>
+        /// Function for Request Data Validation
+        /// </summary>
+        /// <param name="request"></param>
+        private void Validate(submitSingleMessageRequest request)
         {
             if (request.username.IsNullOrEmpty() || request.password.IsNullOrEmpty() || request.facilityID.IsNullOrEmpty() || request.hl7Message.IsNullOrEmpty())
             {
@@ -91,7 +121,7 @@ namespace HL7ParserService
             }
         }
 
-        private void CheckForSecurityFault(string username, string password)
+        private void ValidateSecurity(string username, string password)
         {
             if (!username.Equals(_securityUser.Username) || !password.Equals(_securityUser.Password))
             {
@@ -106,8 +136,8 @@ namespace HL7ParserService
 
             try
             {
-                CheckForSoapFault(request);
-                CheckForSecurityFault(request.username,request.password);
+                Validate(request);
+                ValidateSecurity(request.username,request.password);
 
                 string message = request.hl7Message.Trim();
 
@@ -126,7 +156,7 @@ namespace HL7ParserService
                 string processingId = terser.Get(Constants.MSH11_SEGMENT);
                 string versionId = terser.Get(Constants.MSH12_SEGMENT);
 
-                StoreHL7(request);
+                StoreHL7(request.facilityID, request.hl7Message);
 
                 ack = CreateACK(
                     terser.Get(Constants.MSH1_SEGMENT),
