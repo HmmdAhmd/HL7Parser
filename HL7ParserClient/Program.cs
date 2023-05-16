@@ -1,6 +1,7 @@
 ﻿using HL7ParserClient.Utility;
 using ServiceReference;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 var client = new IS_PortTypeClient(IS_PortTypeClient.EndpointConfiguration.BasicHttpBinding_IIS_PortType, Constants.SERVICE_ENDPOINT);
 
@@ -11,7 +12,30 @@ void ConsoleFault(string code, string reason, string detail)
     Console.WriteLine("A fault occurred:\nCode: {0}\nReason: {1}\nDetail: {2}", code, reason, detail);
 }
 
-async Task submitSingleMessageFromFile()
+async Task ConnectivityTest()
+{
+    string echo = string.Empty;
+    
+    while(echo == string.Empty)
+    {
+        Console.Write("\nEnter anything for connectivity test: ");
+        echo = Console.ReadLine().Trim();
+    }
+
+    Console.WriteLine("----------------------------------------------------------------------\n");
+    try
+    {
+        connectivityTestResponse response = await client.connectivityTestAsync(echo);
+
+        Console.WriteLine("Service echoed back: " + response.@return);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An exception occurred:\n{0}", ex.Message);
+    }
+}
+
+async Task SubmitSingleMessageFromFile()
 {
     string filePath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName, Constants.DEFAULT_MESSAGE_FILE);
     if (File.Exists(filePath))
@@ -21,17 +45,17 @@ async Task submitSingleMessageFromFile()
         string facilityID = string.Empty;
 
         Console.Write("\nEnter Username: ");
-        username = Console.ReadLine();
+        username = Console.ReadLine().Trim();
 
         Console.Write("Enter Password: ");
-        password = Console.ReadLine();
+        password = Console.ReadLine().Trim();
 
         Console.Write("Enter Facility ID: ");
-        facilityID = Console.ReadLine();
+        facilityID = Console.ReadLine().Trim();
 
         Console.WriteLine("----------------------------------------------------------------------\n");
 
-        string message = File.ReadAllText(filePath);
+        string message = File.ReadAllText(filePath).Trim();
         try
         {
             submitSingleMessageResponse response = await client.submitSingleMessageAsync(username, password, facilityID, message);
@@ -52,9 +76,10 @@ async Task submitSingleMessageFromFile()
         {
             Console.WriteLine("An exception occurred:\n{0}", ex.Message);
         }
+    } else
+    {
+        Console.WriteLine("----------------------------------------------------------------------\nError: message.txt file doesn't exist");
     }
-    Console.WriteLine("\nPress any key to continue...");
-    Console.ReadKey();
 }
 
 int ShowMenu()
@@ -80,8 +105,11 @@ async Task PerformTask(int operation)
 {
     switch (operation)
     {
+        case 0:
+            await ConnectivityTest();
+            break;
         case 2:
-            await submitSingleMessageFromFile();
+            await SubmitSingleMessageFromFile();
             break;
         default:
             break;
@@ -92,7 +120,11 @@ while (operation >= 0 && operation <= 2)
 {
     operation = ShowMenu();
     if (operation >= 0 && operation <= 2)
+    {
         await PerformTask(operation);
+        Console.WriteLine("\nPress any key to continue...");
+        Console.ReadKey();
+    }
 }
 
 client.Close();

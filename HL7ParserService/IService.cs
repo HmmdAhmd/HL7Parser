@@ -185,7 +185,10 @@ namespace HL7ParserService
 
         public connectivityTestResponse connectivityTest(connectivityTestRequest request)
         {
-            throw new NotImplementedException();
+            return new connectivityTestResponse
+            {
+                @return = request.echoBack
+            };
         }
     }
 
