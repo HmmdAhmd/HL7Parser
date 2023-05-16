@@ -121,6 +121,10 @@ namespace HL7ParserService
             }
         }
 
+        /// <summary>
+        /// Function for Security Validation
+        /// </summary>
+        /// <param name="request"></param>
         private void ValidateSecurity(string username, string password)
         {
             if (!username.Equals(_securityUser.Username) || !password.Equals(_securityUser.Password))
