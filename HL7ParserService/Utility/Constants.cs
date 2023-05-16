@@ -2,6 +2,10 @@
 {
     public class Constants
     {
+        public const string SERVICE_ENDPOINT = "http://localhost:8282/wsdl-demo";
+        public const string MONGO_DB_CONFIGURATION = "MongoDB";
+        public const string SECURITY_CONFIGURATION = "Security";
+
         public const string DATE_FORMAT = "yyyyMMddHHmmss";
         public const string MESSAGE_TYPE = "ACK";
         public const string FIELD_SEPARATOR = "|";
@@ -30,5 +34,9 @@
         public const string MSA2_SEGMENT = "/MSA-2";
         public const string MSA3_SEGMENT = "/MSA-3";
         public const string CARRIAGE_RETURN = "\r";
+        public const string SOAP_FAULT = "SoapFault";
+        public const string UNSUPPORTED_OPERATION_FAULT = "UnsupportedOperationFault";
+        public const string SECURITY_FAULT = "SecurityFault";
+        public const string MESSAGE_TOO_LARGE_FAULT = "MessageTooFaultFault";
     }
 }

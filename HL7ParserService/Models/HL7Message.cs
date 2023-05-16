@@ -8,15 +8,8 @@ namespace HL7ParserService.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-
-        public string Username { get; set; } = null!;
-
-        public string Password { get; set; } = null!;
-
         public string FacilityId { get; set; } = null!;
-
         public string Message { get; set; } = null!;
-
         public DateTime CreatedDate { get; set; }
     }
 }

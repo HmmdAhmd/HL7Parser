@@ -10,6 +10,7 @@ using NHapi.Base;
 using NHapi.Model.V25.Message;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using Amazon.Runtime.Internal;
 
 namespace HL7ParserService
 {
@@ -33,12 +34,14 @@ namespace HL7ParserService
     public class IS_PortType : IIS_PortType
     {
         private readonly IMongoCollection<HL7Message> _collection;
+        private readonly SecuritySettings _securityUser;
 
-        public IS_PortType(IOptions<MongoDBSettings> settings)
+        public IS_PortType(IOptions<MongoDBSettings> dbSettings, IOptions<SecuritySettings> securitySettings)
         {
-            _collection = new MongoClient(settings.Value.ConnectionString)
-                .GetDatabase(settings.Value.DatabaseName)
-                .GetCollection<HL7Message>(settings.Value.CollectionName);
+            _collection = new MongoClient(dbSettings.Value.ConnectionString)
+                .GetDatabase(dbSettings.Value.DatabaseName)
+                .GetCollection<HL7Message>(dbSettings.Value.CollectionName);
+            _securityUser = securitySettings.Value;
         }
 
         private IMessage CreateACK(string fieldSeparator, string encodingChar, string sendingApp, string sendingFacility, string receivingApp, string receivingFacility, string controlId, string processingId, string versionId, string ackCode, string txtMsg)
@@ -73,8 +76,6 @@ namespace HL7ParserService
         {
             HL7Message hl7 = new HL7Message
             {
-                Username = request.username,
-                Password = request.password,
                 FacilityId = request.facilityID,
                 Message = request.hl7Message,
                 CreatedDate = DateTime.Now,
@@ -82,13 +83,34 @@ namespace HL7ParserService
             _collection.InsertOne(hl7);
         }
 
+        private void CheckForSoapFault(submitSingleMessageRequest request)
+        {
+            if (request.username.IsNullOrEmpty() || request.password.IsNullOrEmpty() || request.facilityID.IsNullOrEmpty() || request.hl7Message.IsNullOrEmpty())
+            {
+                throw new Exception(Constants.SOAP_FAULT);
+            }
+        }
+
+        private void CheckForSecurityFault(string username, string password)
+        {
+            if (!username.Equals(_securityUser.Username) || !password.Equals(_securityUser.Password))
+            {
+                throw new Exception(Constants.SECURITY_FAULT);
+            }
+        }
+
         public submitSingleMessageResponse submitSingleMessage(submitSingleMessageRequest request)
         {
-            string message = request.hl7Message.Trim();
             var parser = new PipeParser();
             IMessage ack = null;
+
             try
             {
+                CheckForSoapFault(request);
+                CheckForSecurityFault(request.username,request.password);
+
+                string message = request.hl7Message.Trim();
+
                 IMessage hl7 = parser.Parse(message);
 
                 var msh = hl7.GetStructure(Constants.MSH_STRUCTURE);
@@ -119,20 +141,43 @@ namespace HL7ParserService
                     Constants.SUCCESS_ACK_CODE,
                     Constants.SUCCESS_TXT_MSG);
             }
-            catch (HL7Exception)
+            catch (Exception e)
             {
-                ack = CreateACK(
-                    Constants.FIELD_SEPARATOR,
-                    Constants.DEFAULT_ENCODING_CHAR,
-                    Constants.DEFAULT_SENDING_APP,
-                    Constants.DEFAULT_SENDING_FACILITY,
-                    String.Empty,
-                    String.Empty,
-                    GenerateRandomId(),
-                    Constants.DEFAULT_PROCESSING_ID,
-                    Constants.DEFAULT_VERSION_ID,
-                    Constants.ERROR_ACK_CODE,
-                    Constants.ERROR_TXT_MSG);
+                switch (e.Message)
+                {
+                    case Constants.SOAP_FAULT:
+                        soapFaultType soapfault = new soapFaultType
+                        {
+                            Code = "01",
+                            Reason = "SOAP invalid",
+                            Detail = "Username, password, facility Id or message is missing"
+                        };
+                        throw new FaultException<soapFaultType>(soapfault, soapfault.Reason.ToString());
+                        break;
+                    case Constants.SECURITY_FAULT:
+                        SecurityFaultType securityFault = new SecurityFaultType
+                        {
+                            Code = "03",
+                            Reason = "Login failed",
+                            Detail = "Username/password is incorrect"
+                        };
+                        throw new FaultException<SecurityFaultType>(securityFault, securityFault.Reason.ToString());
+                        break;
+                    default:
+                        ack = CreateACK(
+                                Constants.FIELD_SEPARATOR,
+                                Constants.DEFAULT_ENCODING_CHAR,
+                                Constants.DEFAULT_SENDING_APP,
+                                Constants.DEFAULT_SENDING_FACILITY,
+                                String.Empty,
+                                String.Empty,
+                                GenerateRandomId(),
+                                Constants.DEFAULT_PROCESSING_ID,
+                                Constants.DEFAULT_VERSION_ID,
+                                Constants.ERROR_ACK_CODE,
+                                Constants.ERROR_TXT_MSG);
+                        break;
+                }
             }
 
             return new submitSingleMessageResponse { @return = parser.Encode(ack).Replace(Constants.CARRIAGE_RETURN, Environment.NewLine) };
@@ -261,7 +306,7 @@ namespace HL7ParserService
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    [MessageContract(WrapperName = "connectivityTest",IsWrapped =true)]
+    [MessageContract(WrapperName = "connectivityTest", IsWrapped = true)]
     public class connectivityTestRequest
     {
 
